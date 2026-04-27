@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Админка — VeloMarket</title>
+  <meta name="description" content="Админка: добавление, редактирование, удаление товаров. Данные в LocalStorage." />
+
+  <link rel="stylesheet" href="./src/css/base.css" />
+  <link rel="stylesheet" href="./src/css/components.css" />
+  <link rel="stylesheet" href="./src/css/pages.css" />
+
+  <style>
+    .imgtools{display:flex;gap:10px;align-items:center}
+    .imgtools .input{flex:1}
+    .imgpreview{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:10px}
+    .imgpreview__item{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+    .imgpreview__item img{width:100%;height:64px;object-fit:cover;display:block}
+    .imgpreview__bar{display:flex;gap:6px;align-items:center;justify-content:space-between;padding:6px 8px;border-top:1px solid var(--line);font-size:12px}
+    .imgpreview__btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:4px 8px;cursor:pointer}
+    .imgpreview__btn:hover{border-color:var(--line2)}
+    @media (max-width: 920px){.imgpreview{grid-template-columns:repeat(4,1fr)}}
+    @media (max-width: 560px){.imgpreview{grid-template-columns:repeat(3,1fr)}}
+  </style>
+
+  <script type="module" src="./src/js/app.js"></script>
+</head>
+<body data-page="admin">
+  <a class="skip" href="#main">К содержимому</a>
+
+  <header class="header">
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="./index.html" aria-label="VeloMarket — на главную">
+          <span class="brand__mark" aria-hidden="true">🚲</span>
+          <span class="brand__name">VeloMarket</span>
+        </a>
+
+        <form class="search" action="./catalog.html" method="get" role="search" aria-label="Поиск по товарам">
+          <input class="search__input" type="search" name="q" placeholder="Поиск: бренд или модель" />
+          <button class="search__btn" type="submit" aria-label="Найти">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18a8 8 0 1 1 5.293-14.293A8 8 0 0 1 10 18Zm11 3-6.1-6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <nav class="top-actions" aria-label="Быстрые действия">
+          <a class="icon-link is-active" href="./admin.html" title="Админка" aria-label="Админка">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 9a8 8 0 1 0-16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a class="icon-link" href="./cart.html" title="Корзина" aria-label="Корзина">
+            <span class="badge" data-cart-badge hidden>0</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6h15l-2 9H7L6 6Zm0 0-2-3H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="container nav__inner">
+        <a class="nav__link" href="./index.html">Главная</a>
+        <a class="nav__link" href="./catalog.html">Каталог</a>
+        <a class="nav__link is-active" href="./admin.html">Админка</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="container">
+      <div class="crumbs">
+        <a href="./index.html">Главная</a> <span>/</span> <span>Админка</span>
+      </div>
+
+      <!-- LOGIN -->
+      <section id="adminLogin" class="admin-login card" aria-label="Вход в админку">
+        <h1 class="page-title" style="margin:0 0 8px">Админка</h1>
+        <div class="muted" style="margin-bottom:14px">Демо-защита: PIN <strong>1234</strong> </div>
+
+        <form id="adminPinForm" class="admin-login__form">
+          <div class="field">
+            <div class="field__label">PIN</div>
+            <input class="input" id="adminPin" type="password" inputmode="numeric" placeholder="1234" autocomplete="one-time-code" />
+          </div>
+          <button class="btn btn--primary" type="submit">Войти</button>
+        </form>
+      </section>
+
+      <!-- PANEL -->
+      <section id="adminPanel" hidden aria-label="Панель управления">
+        <div class="admin-head">
+          <div>
+            <h1 class="page-title" style="margin:0">Товары</h1>
+            <div class="muted" id="adminCount">Всего: —</div>
+          </div>
+
+          <div class="admin-actions">
+            <button class="btn btn--primary" type="button" id="createProductBtn">+ Добавить</button>
+            <button class="btn btn--ghost" type="button" id="resetSeedBtn">Сброс к seed</button>
+            <button class="btn btn--ghost" type="button" id="logoutBtn">Выйти</button>
+          </div>
+        </div>
+
+        <div class="admin-toolbar card">
+          <form id="adminSearchForm" class="admin-search">
+            <input class="input" id="adminSearch" placeholder="Поиск по названию/бренду/категории" />
+            <button class="btn btn--primary" type="submit">Найти</button>
+          </form>
+
+          <div class="admin-sort">
+            <label class="muted small" for="adminSort">Сортировка</label>
+            <select class="input" id="adminSort">
+              <option value="updated_desc">Сначала обновлённые</option>
+              <option value="title_asc">По названию (A→Я)</option>
+              <option value="price_asc">Сначала дешевле</option>
+              <option value="price_desc">Сначала дороже</option>
+              <option value="stock_desc">Сначала в наличии</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap card">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Товар</th>
+                <th>Категория</th>
+                <th>Бренд</th>
+                <th class="num">Цена</th>
+                <th class="num">Старая</th>
+                <th>Наличие</th>
+                <th>Теги</th>
+                <th class="num">Рейт.</th>
+                <th class="num">Отзывы</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="adminTbody">
+              <tr><td colspan="10" class="muted">Загрузка…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        
+      </section>
+    </div>
+  </main>
+
+  <!-- PRODUCT EDIT MODAL -->
+  <dialog class="modal modal--wide" id="productModal" aria-label="Редактор товара">
+    <div class="modal__card">
+      <div class="modal__head">
+        <div class="modal__title" id="productModalTitle">Товар</div>
+        <button class="icon-link" type="button" data-close-modal aria-label="Закрыть">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="productForm" class="form-grid">
+        <div class="field">
+          <div class="field__label">Название</div>
+          <input class="input" name="title" placeholder="Cube Acid 29" required />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Категория</div>
+          <select class="input" name="category" required>
+            <option value="детский">детский</option>
+            <option value="женский">женский</option>
+            <option value="шоссейный">шоссейный</option>
+            <option value="горный" selected>горный</option>
+            <option value="подростковый">подростковый</option>
+            <option value="складной">складной</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Бренд</div>
+          <input class="input" name="brand" placeholder="Cube" required />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Наличие</div>
+          <select class="input" name="inStock">
+            <option value="true" selected>В наличии</option>
+            <option value="false">Нет в наличии</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Цена</div>
+          <input class="input" name="price" type="number" inputmode="numeric" placeholder="79990" required />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Старая цена (для скидки)</div>
+          <input class="input" name="oldPrice" type="number" inputmode="numeric" placeholder="89990" />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Рейтинг (0–5)</div>
+          <input class="input" name="rating" type="number" step="0.1" min="0" max="5" placeholder="4.7" />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Отзывы</div>
+          <input class="input" name="reviewsCount" type="number" inputmode="numeric" min="0" placeholder="12" />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Вопросы (Q&A)</div>
+          <input class="input" name="qaCount" type="number" inputmode="numeric" min="0" placeholder="3" />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Теги (HIT, SALE) через запятую</div>
+          <input class="input" name="tags" placeholder="HIT, SALE" />
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="field__label">Добавить фото ссылкой</div>
+          <div class="imgtools">
+            <input class="input" id="imageUrlInput" placeholder="https://.../photo.jpg" />
+            <button class="btn btn--primary" type="button" id="addImageUrlBtn">Добавить</button>
+          </div>
+          <div class="muted small" style="margin-top:8px">Можно добавлять несколько ссылок — они попадут в галерею слева/миниатюры.</div>
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="field__label">Изображения (каждое с новой строки)</div>
+          <textarea class="input" name="images" id="imagesTextarea" rows="3" placeholder="./assets/img/placeholder-bike-1.jpg&#10;https://..."></textarea>
+          <div id="imagePreview" class="imgpreview" aria-label="Предпросмотр изображений"></div>
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="field__label">Краткие пункты (2–6, каждый с новой строки)</div>
+          <textarea class="input" name="bullets" rows="3" placeholder="Гидравлические дисковые тормоза&#10;Колёса 29&quot;"></textarea>
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="field__label">Описание</div>
+          <textarea class="input" name="description" rows="4" placeholder="Короткое и понятное описание модели..."></textarea>
+        </div>
+
+        <div class="field" style="grid-column:1/-1">
+          <div class="field__label">Характеристики (каждая строка: Ключ: Значение)</div>
+          <textarea class="input" name="specs" rows="4" placeholder="Рама: Алюминий&#10;Колёса: 29&quot;&#10;Тормоза: Гидравлические"></textarea>
+        </div>
+
+        <div class="field">
+          <div class="field__label">Размеры (через запятую)</div>
+          <input class="input" name="sizes" placeholder="S, M, L" />
+        </div>
+
+        <div class="field">
+          <div class="field__label">Цвета (через запятую)</div>
+          <input class="input" name="colors" placeholder="Чёрный, Синий" />
+        </div>
+
+        <div class="modal__actions" style="grid-column:1/-1">
+          <button class="btn btn--primary" type="submit">Сохранить</button>
+          <button class="btn btn--ghost" type="button" data-close-modal>Отмена</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__left">
+        <div class="footer__brand">VeloMarket</div>
+      </div>
+      <div class="footer__right">
+        <a class="footer__link" href="./catalog.html">Каталог</a>
+        <a class="footer__link" href="./cart.html">Корзина</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-relevant="additions"></div>
+</body>
+</html>

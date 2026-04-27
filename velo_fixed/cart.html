@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Корзина — VeloMarket</title>
+  <meta name="description" content="Корзина: изменение количества, удаление, итоговая сумма, промокод и оформление с черновиком в LocalStorage." />
+
+  <link rel="stylesheet" href="./src/css/base.css" />
+  <link rel="stylesheet" href="./src/css/components.css" />
+  <link rel="stylesheet" href="./src/css/pages.css" />
+
+  <script type="module" src="./src/js/app.js"></script>
+</head>
+<body data-page="cart">
+  <a class="skip" href="#main">К содержимому</a>
+
+  <header class="header">
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="./index.html" aria-label="VeloMarket — на главную">
+          <span class="brand__mark" aria-hidden="true">🚲</span>
+          <span class="brand__name">VeloMarket</span>
+        </a>
+
+        <form class="search" action="./catalog.html" method="get" role="search" aria-label="Поиск по товарам">
+          <input class="search__input" type="search" name="q" placeholder="Поиск: бренд или модель" />
+          <button class="search__btn" type="submit" aria-label="Найти">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18a8 8 0 1 1 5.293-14.293A8 8 0 0 1 10 18Zm11 3-6.1-6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <nav class="top-actions" aria-label="Быстрые действия">
+          <a class="icon-link" href="./admin.html" title="Админка" aria-label="Админка">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 9a8 8 0 1 0-16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a class="icon-link is-active" href="./cart.html" title="Корзина" aria-label="Корзина">
+            <span class="badge" data-cart-badge hidden>0</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6h15l-2 9H7L6 6Zm0 0-2-3H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="container nav__inner">
+        <a class="nav__link" href="./index.html">Главная</a>
+        <a class="nav__link" href="./catalog.html">Каталог</a>
+        <a class="nav__link" href="./admin.html">Админка</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="container">
+      <div class="crumbs">
+        <a href="./index.html">Главная</a> <span>/</span> <span>Корзина</span>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Корзина</h1>
+          <div class="muted" id="cartSubtitle">—</div>
+        </div>
+      </div>
+
+      <div class="cart-layout">
+        <section class="cart-left" aria-label="Список товаров">
+          <div id="cartList"></div>
+        </section>
+
+        <aside class="cart-right" aria-label="Итоги">
+          <div class="sum card">
+            <div class="sum__title">Итого</div>
+
+            <div class="sum__row">
+              <span class="muted">Товаров</span>
+              <span><strong id="sumItems">0</strong></span>
+            </div>
+
+            <div class="sum__row">
+              <span class="muted">Сумма</span>
+              <span id="sumSubtotal">0 ₽</span>
+            </div>
+
+            <div class="sum__row" id="discountRow" hidden>
+              <span class="muted">Скидка</span>
+              <span id="sumDiscount">—</span>
+            </div>
+
+            <div class="sum__divider"></div>
+
+            <div class="sum__row sum__row--big">
+              <span>К оплате</span>
+              <span id="sumTotal">0 ₽</span>
+            </div>
+
+            <div class="promo">
+              <div class="field">
+                <div class="field__label">Промокод </div>
+                <div class="promo__row">
+                  <input class="input" id="promoCode" placeholder="VELO10 или VELO5" />
+                  <button class="btn btn--primary" type="button" id="applyPromoBtn">Ок</button>
+            </div>
+
+            <button class="btn btn--primary" type="button" id="checkoutBtn">Оформить</button>
+
+            <a class="btn btn--ghost" href="./catalog.html" style="margin-top:10px">Продолжить покупки</a>
+          </div>
+
+          
+        </aside>
+      </div>
+
+      <section class="checkout" id="checkoutSection" hidden aria-label="Оформление заказа">
+        <div class="checkout__head">
+          <h2 class="checkout__title">Оформление</h2>
+          <button class="btn btn--ghost" type="button" id="closeCheckoutBtn">Свернуть</button>
+        </div>
+
+        <form class="checkout__form" id="checkoutForm">
+          <div class="grid2">
+            <div class="field">
+              <div class="field__label">Имя</div>
+              <input class="input" name="name" placeholder="Иван" required />
+            </div>
+            <div class="field">
+              <div class="field__label">Телефон</div>
+              <input class="input" name="phone" placeholder="+7 (999) 000-00-00" required />
+            </div>
+
+            <div class="field">
+              <div class="field__label">Email (необязательно)</div>
+              <input class="input" name="email" type="email" placeholder="mail@example.com" />
+            </div>
+            <div class="field">
+              <div class="field__label">Город</div>
+              <input class="input" name="city" placeholder="Самара" required />
+            </div>
+
+            <div class="field" style="grid-column:1/-1">
+              <div class="field__label">Адрес</div>
+              <input class="input" name="address" placeholder="Улица, дом, квартира" required />
+            </div>
+
+            <div class="field" style="grid-column:1/-1">
+              <div class="field__label">Комментарий</div>
+              <textarea class="input" name="comment" rows="3" placeholder="Пожелания к доставке"></textarea>
+            </div>
+          </div>
+
+          <div class="checkout__actions">
+            <button class="btn btn--primary" type="submit">Сохранить заказ </button>
+            <button class="btn btn--ghost" type="button" id="saveDraftBtn">Сохранить черновик</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__left">
+        <div class="footer__brand">VeloMarket</div>
+      </div>
+      <div class="footer__right">
+        <a class="footer__link" href="./catalog.html">Каталог</a>
+        <a class="footer__link" href="./admin.html">Админка</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-relevant="additions"></div>
+</body>
+</html>

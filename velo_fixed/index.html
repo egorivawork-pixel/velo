@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VeloMarket — интернет-магазин велосипедов</title>
+  <meta name="description" content="VeloMarket — велосипеды: горные, шоссейные, женские, детские, подростковые и складные. Каталог, карточка товара, корзина и админка на LocalStorage." />
+
+  <link rel="stylesheet" href="./src/css/base.css" />
+  <link rel="stylesheet" href="./src/css/components.css" />
+  <link rel="stylesheet" href="./src/css/pages.css" />
+
+  <script type="module" src="./src/js/app.js"></script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#main">К содержимому</a>
+
+  <header class="header">
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <a class="brand" href="./index.html" aria-label="VeloMarket — на главную">
+          <span class="brand__mark" aria-hidden="true">🚲</span>
+          <span class="brand__name">VeloMarket</span>
+        </a>
+
+        <form class="search" action="./catalog.html" method="get" role="search" aria-label="Поиск по товарам">
+          <input class="search__input" type="search" name="q" placeholder="Поиск: бренд или модель" />
+          <button class="search__btn" type="submit" aria-label="Найти">
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18a8 8 0 1 1 5.293-14.293A8 8 0 0 1 10 18Zm11 3-6.1-6.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </form>
+
+        <nav class="top-actions" aria-label="Быстрые действия">
+          <a class="icon-link" href="./admin.html" title="Админка" aria-label="Админка">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 9a8 8 0 1 0-16 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a class="icon-link" href="./cart.html" title="Корзина" aria-label="Корзина">
+            <span class="badge" data-cart-badge hidden>0</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6h15l-2 9H7L6 6Zm0 0-2-3H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="container nav__inner">
+        <a class="nav__link is-active" href="./index.html">Главная</a>
+        <a class="nav__link" href="./catalog.html">Каталог</a>
+        <a class="nav__link" href="./admin.html">Админка</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <span class="kicker">Быстрый выбор • Скидки • Хиты</span>
+          <h1 class="hero__title">Выбери велосипед под свой стиль — от города до трейла</h1>
+          <p class="hero__sub">
+            Каталог с фильтрами как в крупном магазине: категории, бренды, цена, наличие, сортировка и виды отображения.
+          </p>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="./catalog.html">Перейти в каталог</a>
+            <a class="btn btn--ghost" href="./catalog.html?tag=SALE">Скидки</a>
+            <a class="btn btn--ghost" href="./catalog.html?tag=HIT">Хиты</a>
+          </div>
+
+          <div class="hero__chips hero__chips--cats chips chips--wrap" aria-label="Категории">
+            <a class="chip" href="./catalog.html?category=горный">Горные</a>
+            <a class="chip" href="./catalog.html?category=шоссейный">Шоссейные</a>
+            <a class="chip" href="./catalog.html?category=женский">Женские</a>
+            <a class="chip" href="./catalog.html?category=детский">Детские</a>
+            <a class="chip" href="./catalog.html?category=подростковый">Подростковые</a>
+            <a class="chip" href="./catalog.html?category=складной">Складные</a>
+          </div>
+        </div>
+
+        <div class="hero__card">
+          <div class="hero-card">
+            <div class="hero-card__top">
+              <span class="pill pill--blue">SALE</span>
+            </div>
+            <div class="hero-card__img">
+              <img src="https://i.pinimg.com/736x/74/fd/12/74fd12992b46973132135b4d4f3507e0.jpg" alt="Велосипед" loading="lazy" />
+            </div>
+            <div class="hero-card__meta">
+              <div class="hero-card__name">Топ-подборка недели</div>
+              <div class="muted">Хиты и товары со скидками — в один клик</div>
+              <div class="hero-card__actions">
+                <a class="btn btn--primary" href="./catalog.html?sort=discount_desc">Смотреть со скидкой</a>
+                <a class="btn btn--ghost" href="./catalog.html?sort=popular">Сначала популярные</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 class="section__title">Популярные категории</h2>
+          <div class="section__actions">
+            <a class="btn btn--ghost" href="./catalog.html?inStock=1">Только в наличии</a>
+          </div>
+        </div>
+
+        <div class="benefits" style="margin-bottom:14px">
+          <a class="benefit" href="./catalog.html?category=горный">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M5 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm14 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 13h4l3-6h-3l-2 4H8l1 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="benefit__title">Горные</div>
+            <div class="benefit__text">Универсальные модели для города и грунта.</div>
+          </a>
+
+          <a class="benefit" href="./catalog.html?category=шоссейный">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm12 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 15h4l2-5h-4l-2 5Zm0 0 2-6h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="benefit__title">Шоссейные</div>
+            <div class="benefit__text">Скорость, накат и тренировки на асфальте.</div>
+          </a>
+
+          <a class="benefit" href="./catalog.html?category=женский">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 3v10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M7 18a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 21v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="benefit__title">Женские</div>
+            <div class="benefit__text">Комфортная посадка и продуманная геометрия.</div>
+          </a>
+
+          <a class="benefit" href="./catalog.html?category=детский">
+            <div class="benefit__icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M6 18a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm12 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 15h6l-2-5H9l2 5Z" fill="none" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="benefit__title">Детские</div>
+            <div class="benefit__text">Лёгкие и надёжные модели для обучения.</div>
+          </a>
+        </div>
+
+        <div class="cta-band">
+          <div>
+            <div class="cta-band__title">Подбор по параметрам</div>
+            <div class="cta-band__text">Фильтры слева, активные чипы, сортировки и виды отображения.</div>
+          </div>
+          <div class="cta-band__right">
+            <a class="btn btn--primary" href="./catalog.html">Открыть фильтры</a>
+            <a class="btn btn--ghost" href="./admin.html">Управлять товарами</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__left">
+        <div class="footer__brand">VeloMarket</div>
+        <div class="footer__muted">Демо-магазин</div>
+      </div>
+      <div class="footer__right">
+        <a class="footer__link" href="./catalog.html">Каталог</a>
+        <a class="footer__link" href="./cart.html">Корзина</a>
+        <a class="footer__link" href="./admin.html">Админка</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-relevant="additions"></div>
+</body>
+</html>
